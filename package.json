@@ -11,7 +11,9 @@
     "import:library": "node scripts/import-library.mjs",
     "check:assets": "node scripts/check-assets.mjs",
     "pregenerate": "node scripts/check-assets.mjs",
-    "find:pdfs": "node scripts/find-missing-pdfs.mjs"
+    "find:pdfs": "node scripts/find-missing-pdfs.mjs",
+    "ia:plan": "node scripts/ia-upload.mjs",
+    "ia:upload": "node scripts/ia-upload.mjs --go"
   },
   "dependencies": {
     "@nuxt/content": "^3.17.0",

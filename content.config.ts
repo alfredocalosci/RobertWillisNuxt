@@ -14,6 +14,7 @@ export default defineContentConfig({
         publication: z.string().nullable(), // txt_lib
         category: z.string().nullable(), // cat_lib
         file: z.string().nullable(), // file_lib → /Library/pdf/<file>
+        archiveId: z.string().optional(), // Internet Archive item holding the PDF (set by scripts/ia-upload.mjs)
         cover: z.string().nullable(), // img_lib → /Library/img/<cover>
         sizeMb: z.number(), // size_lib
         hidden: z.boolean(), // hide_lib
