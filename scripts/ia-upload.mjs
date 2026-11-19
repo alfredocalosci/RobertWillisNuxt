@@ -8,19 +8,27 @@
  *   node scripts/ia-upload.mjs --go            upload every item not uploaded yet
  *   node scripts/ia-upload.mjs --go --only 1   upload a single publication (by legacyId)
  *
+ * Throttling: pauses --pause seconds between uploads (default 90), checks the IA
+ * rate limit before each upload and waits while over it (up to --max-wait minutes,
+ * default 120), and retries a failed upload twice after 10 minutes.
+ *
  * Requires the `ia` CLI (brew install internetarchive) configured with S3 keys in
  * ~/.config/internetarchive/ia.ini. After each successful upload, `archiveId` is written
  * into that publication's YAML file, so re-running skips items already done.
  */
 import { readdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { homedir } from 'node:os'
 import { spawnSync } from 'node:child_process'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const LIB = join(ROOT, 'content/library')
 const PDF = join(ROOT, 'public/Library/pdf')
 const GO = process.argv.includes('--go')
-const ONLY = process.argv.includes('--only') ? Number(process.argv[process.argv.indexOf('--only') + 1]) : null
+const arg = (name, fallback) => process.argv.includes(name) ? Number(process.argv[process.argv.indexOf(name) + 1]) : fallback
+const ONLY = arg('--only', null)
+const PAUSE_S = arg('--pause', 90) // seconds between uploads
+const WAIT_MAX_MIN = arg('--max-wait', 120) // give up if still rate-limited after this many minutes
 const PREFIX = 'robertwillis2016'
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 
@@ -156,18 +164,70 @@ if (!GO) {
 const which = spawnSync('ia', ['--version'], { encoding: 'utf8' })
 if (which.status !== 0) throw new Error('`ia` CLI not found — brew install internetarchive')
 
+// S3 keys (for the rate-limit check only; never printed)
+function s3Keys() {
+  const ini = readFileSync(join(homedir(), '.config/internetarchive/ia.ini'), 'utf8')
+  const get = k => ini.match(new RegExp(`^\\s*${k}\\s*=\\s*(\\S+)`, 'm'))?.[1]
+  return { access: get('access'), secret: get('secret') }
+}
+const KEYS = s3Keys()
+const hhmm = () => new Date().toTimeString().slice(0, 5)
+
+/** Asks the IA S3 endpoint whether this account/bucket is currently throttled. */
+async function overLimit(bucket) {
+  const q = new URLSearchParams({ check_limit: '1', accesskey: KEYS.access, bucket })
+  try {
+    const r = await fetch(`https://s3.us.archive.org/?${q}`, {
+      headers: { authorization: `LOW ${KEYS.access}:${KEYS.secret}`, 'User-Agent': 'robertwillis-ia-upload/1.0' },
+    })
+    const j = await r.json()
+    return { over: !!j.over_limit, queued: j.detail?.accesskey_tasks_queued ?? '?' }
+  } catch { return { over: false, queued: '?' } } // don't block on a failed check
+}
+
+/** Waits (up to WAIT_MAX_MIN) until the account is no longer rate-limited. */
+async function waitForCapacity(bucket) {
+  const start = Date.now()
+  for (;;) {
+    const { over, queued } = await overLimit(bucket)
+    if (!over) return true
+    const waited = Math.round((Date.now() - start) / 60000)
+    if (waited >= WAIT_MAX_MIN) return false
+    console.log(`  ⏸  ${hhmm()} archive.org asks to slow down (${queued} of your tasks queued) — waiting 5 min…`)
+    await sleep(5 * 60_000)
+  }
+}
+
+let uploaded = 0
 for (const p of items) {
   if (p.archiveId) { console.log(`skip   #${p.id} already uploaded → ${p.archiveId}`); continue }
   const s = await itemState(p.identifier)
   if (s.exists && s.files?.includes(p.file)) {
     console.log(`exists #${p.id} ${p.identifier} (file already there) — recording archiveId`)
   } else {
-    console.log(`upload #${p.id} ${p.identifier} (${(statSync(p.path).size / 1e6).toFixed(1)} MB)…`)
+    if (uploaded > 0 && PAUSE_S > 0) {
+      console.log(`  …  ${hhmm()} pausing ${PAUSE_S}s between items`)
+      await sleep(PAUSE_S * 1000)
+    }
     const args = ['upload', p.identifier, p.path, '--retries', '20', '--sleep', '60', '--checksum']
     for (const [k, v] of Object.entries(p.metadata))
       for (const val of [v].flat()) args.push(`--metadata=${k}:${val}`)
-    const r = spawnSync('ia', args, { stdio: 'inherit' })
-    if (r.status !== 0) { console.error(`✖ upload failed for #${p.id}; stopping. Re-run to resume.`); process.exit(1) }
+
+    let ok = false
+    for (let attempt = 1; attempt <= 3 && !ok; attempt++) {
+      if (!await waitForCapacity(p.identifier)) {
+        console.error(`✖ still rate-limited after ${WAIT_MAX_MIN} min; stopping. Re-run later to resume.`)
+        process.exit(1)
+      }
+      console.log(`upload #${p.id} ${p.identifier} (${(statSync(p.path).size / 1e6).toFixed(1)} MB)${attempt > 1 ? ` — attempt ${attempt}/3` : ''} [${hhmm()}]…`)
+      ok = spawnSync('ia', args, { stdio: 'inherit' }).status === 0
+      if (!ok && attempt < 3) {
+        console.log(`  ⚠  ${hhmm()} upload failed — waiting 10 min before retrying #${p.id}`)
+        await sleep(10 * 60_000)
+      }
+    }
+    if (!ok) { console.error(`✖ upload failed 3 times for #${p.id}; stopping. Re-run to resume.`); process.exit(1) }
+    uploaded++
   }
   const ymlPath = join(LIB, p.yml)
   const y = readFileSync(ymlPath, 'utf8')
