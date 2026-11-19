@@ -1,0 +1,27 @@
+{
+  "name": "robert-willis-nuxt",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "import:library": "node scripts/import-library.mjs",
+    "check:assets": "node scripts/check-assets.mjs",
+    "pregenerate": "node scripts/check-assets.mjs"
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.17.0",
+    "@nuxt/ui": "^4.13.0",
+    "better-sqlite3": "^13.2.0",
+    "nuxt": "^4.6.4",
+    "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.2.0": true,
+    "esbuild@0.28.2": true,
+    "vue-demi@0.14.10": true
+  }
+}

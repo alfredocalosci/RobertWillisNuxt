@@ -1,0 +1,21 @@
+# Used only when the site is deployed on Apache.
+# Nuxt also prerenders meta-refresh pages for these URLs, so other static hosts work too.
+
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Legacy URLs from the 2016 site → new routes (301)
+  RewriteRule ^index\.html$ / [R=301,L]
+  RewriteRule ^about\.html$ /about [R=301,L]
+  RewriteRule ^Library/index\.php$ /Library/ [R=301,L]
+
+  # Serve prerendered pages without trailing slash (/about → /about/index.html or about.html)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.*?)/?$ /$1/index.html [L]
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType application/pdf .pdf
+</IfModule>

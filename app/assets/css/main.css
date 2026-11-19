@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/* ------------------------------------------------------------------
+   Design tokens ported from the 2016 css/my.css
+   ------------------------------------------------------------------ */
+@theme {
+  --font-serif: "Crimson Pro", Georgia, serif;
+  --font-sans: "Crimson Pro", Georgia, serif;
+
+  --color-blu: #325bae;      /* .rosso — links, accents */
+  --color-slate: #54668c;    /* h2 small */
+  --color-teal: #5fdee0;     /* blockquote rule, slideshow pager */
+  --color-ink: #333;         /* body text */
+  --color-paper: #ebeff2;    /* page background */
+
+  /* Bootstrap 3 breakpoints, plus the old 481px tweak point */
+  --breakpoint-xs: 30.0625rem; /* 481px */
+  --breakpoint-sm: 48rem;      /* 768px */
+  --breakpoint-md: 62rem;      /* 992px */
+  --breakpoint-lg: 75rem;      /* 1200px — fixed sidebar appears */
+  --breakpoint-xl: 75rem;
+}
+
+/* ------------------------------------------------------------------
+   Base typography (24px baseline rhythm)
+   ------------------------------------------------------------------ */
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-paper font-serif text-ink antialiased;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  a { @apply text-blu; }
+  a:hover { @apply underline; }
+
+  h1, h2, h3, h4 { @apply font-bold; }
+  h1 { font-size: 2.5625em; line-height: 1.1707em; margin-top: .5854em; }
+  h2 { font-size: 2.125em; line-height: 1.4118em; margin-top: .7059em; }
+  h3 { font-size: 1.75em; line-height: 1.7143em; margin-top: .8571em; }
+  h4 { font-size: 1.25em; line-height: 1.2em; margin-top: .6em; margin-bottom: .6em; }
+  h5 { font-size: 1em; font-weight: 700; }
+  h6 { font-size: .75em; margin-top: .75rem; margin-bottom: .75rem; }
+  p { margin-bottom: 1.5em; }
+  p strong { font-weight: 600; }
+
+  hr { border-top: 1px solid rgb(0 0 0 / .075); margin: 1.25rem auto; }
+
+  blockquote {
+    border-left: 5px solid var(--color-teal);
+    padding: .5em 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  blockquote p { font-size: 1.25em; line-height: 1.2em; margin: .6em 0; }
+
+  sup { font-size: .75em; }
+
+  figure { margin-top: 1.5em; }
+  figure img { max-width: 100%; height: auto; border: 1px solid rgb(255 255 255 / .75); }
+  figcaption { @apply text-[#666] italic font-light; margin: .75em 0; }
+}
+
+/* ------------------------------------------------------------------
+   Layout & components
+   ------------------------------------------------------------------ */
+@layer components {
+  /* .sezione: centred 90% column; at ≥1200px it sits right of the fixed sidebar */
+  .sezione { @apply mx-auto w-[90%] lg:mx-0 lg:w-[1160px] lg:pl-[396px]; }
+  .spaced { @apply py-12; }
+  .spaced-top { @apply pt-12; }
+  .spaced-bottom { @apply pb-12; }
+
+  /* Bootstrap-like 12 col row with 30px gutters */
+  .row { @apply grid grid-cols-12 gap-x-[30px]; }
+
+  /* Small italic side heading (h6.sez) */
+  .sez {
+    @apply text-right lowercase italic font-normal text-[#757575];
+    font-size: 1.1em;
+    line-height: 1.5;
+    margin: 0 0 .5em;
+    padding: .75em .75em .5em .5em;
+    border-top: 1px solid rgb(0 0 0 / .05);
+    border-bottom: 1px solid rgb(0 0 0 / .05);
+  }
+  .sez-loose { @apply border-b-0; margin-bottom: 3em; }
+
+  /* Long-form prose rendered from Markdown */
+  .prose-rw > p + p { text-indent: -.75em; padding-left: .75em; }
+  .prose-rw h4 { font-weight: 600; }
+  .prose-rw.large p { font-size: 1.125em; line-height: 1.3333em; margin: 0 0 1.3333em; }
+  .prose-rw.large blockquote p { margin-bottom: 0; }
+
+  /* Drop cap on the first paragraph (replaces span.capitalLetter) */
+  .drop-cap > p:first-of-type::first-letter {
+    @apply text-blu;
+    float: left;
+    font-size: 5.25em;
+    line-height: .66em;
+    padding: .1em .1em 2px 0;
+    font-weight: 800;
+  }
+  .drop-cap.large > p:first-of-type::first-letter { font-size: 4.5em; padding-right: .2em; }
+
+  /* Download link with the original cloud icon */
+  .cloud {
+    @apply block text-right text-[#666];
+    padding-right: 48px;
+    background: url(/img/download_a.png) right no-repeat;
+  }
+  .cloud:hover { background-image: url(/img/download_b.png); }
+
+  /* Book cover / flyer thumbnails */
+  .portada { border: 1px solid #ccc; box-shadow: 0 8px 6px -6px #000; }
+}

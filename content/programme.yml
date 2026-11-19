@@ -1,0 +1,29 @@
+# Symposium programme, 16 September 2016 — Gonville and Caius College, Cambridge
+groups:
+  - theme: From the local to the global
+    papers:
+      - { speaker: James Campbell, title: Willis and Cambridge architecture }
+      - { speaker: Alex Buchanan, title: Willis and his networks of knowledge }
+  - theme: Willis and science
+    papers:
+      - { speaker: Jacques Heyman, title: The teaching of engineering in Cambridge }
+      - { speaker: Ben Marsden, title: Willis and Science }
+      - { speaker: Robin Maconie, title: "Willis, speech, sound and music" }
+  - theme: Willis and archaeology
+    papers:
+      - { speaker: Chris Elliott, title: Willis and Egyptian architecture }
+      - { speaker: Martin Biddle, title: Willis and the Holy Sepulchre Church in Jerusalem }
+      - { speaker: Toby Huitson, title: Willis and upper level evidence }
+      - { speaker: Tim Tatton-Brown, title: Robert Willis and Chichester Cathedral }
+  - theme: Willis, vaults and drawing
+    papers:
+      - { speaker: Santiago Huerta, title: Robert Willis and gothic vault studies before 1850 }
+      - { speaker: Antonio Becchi, title: "Drawing proofs: The tangible worlds of Robert Willis" }
+      - { speaker: Javier Girón, title: Willis and the constructive drawing in architecture }
+      - { speaker: Nick Webb, title: Digital re-presentation of Willis’s work on medieval vaults }
+  - theme: Willis’s influence
+    papers:
+      - { speaker: David Wendland, title: "Robert Willis and Germany: Gothic Revival and research on Mediaeval Architecture" }
+      - { speaker: Simona Talenti, title: Willis influence on Italy on the 19th C }
+      - { speaker: Martin Bressani, title: Willis and Viollet-le-Duc }
+      - { speaker: Adrian Forty, title: Willis and the modernists }
