@@ -21,7 +21,7 @@ Deploy by uploading the contents of `.output/public` to any static host. The hos
 
 ```
 app/
-  pages/index.vue           /          symposium (cover, call, programme, venue, book, flyer)
+  pages/index.vue           /          symposium (cover, call, programme, venue, flyer)
   pages/about.vue           /about     about Willis (this web site, life and works)
   pages/Library/index.vue   /Library/  Digital Library (capital L, see Gotchas)
   components/
@@ -79,7 +79,7 @@ hidden: false                    # hidden entries are kept but filtered out
 - Nuxt 4 auto-imports: anything in `app/utils`, `app/composables` and `shared/types` is global, so don't add `import type` for `SectionLink`/`SitePageKey`.
 - Tailwind breakpoints are overridden to Bootstrap 3 values: `xs` 481px, `sm` 768, `md` 992, `lg`/`xl` 1200 (fixed sidebar). Use them rather than adding custom media queries.
 - Colour tokens: `blu` #325bae (links/accents), `slate`, `teal` #5fdee0, `ink` #333, `paper` #ebeff2 (background).
-- Font: Crimson Pro, self-hosted at build time through @nuxt/fonts. It replaces the Adobe Typekit freight-text-pro.
+- Font: Alegreya, self-hosted at build time through @nuxt/fonts. It replaces the Adobe Typekit freight-text-pro.
 - The design is light only (`colorMode` is forced light).
 - Scripts are plain Node `.mjs` in `scripts/`, wired up as npm scripts.
 
@@ -103,7 +103,7 @@ The original site (`~/Sites/RobertWillis`, kept untouched as the reference) was 
 | list.js (search, sort) | `LibraryList.vue` (accent-insensitive search on author/title/year; Year/Title/Author toggle asc/desc) |
 | jquery.nav + scrollTo | `useScrollSpy` + CSS `scroll-behavior: smooth` |
 | jquery.cycle2 slideshow | `SlideShow.vue` + `SlidePager.vue` (9s, pauses on hover, respects reduced motion) |
-| Typekit freight-text-pro | Crimson Pro via @nuxt/fonts |
+| Typekit freight-text-pro | Alegreya via @nuxt/fonts |
 | Google Analytics UA-3945855-31 | dropped (UA is shut down) |
 
 **Data migration.** `scripts/import-library.mjs` parsed the MySQL dump `zgr10oh_db1166fb.sql` (table `library_rw`, Jan 2024, **51 rows**: 48 visible, 3 hidden). It wrote one YAML file per row and copied the 48 referenced covers from `Library/img/`.

@@ -5,8 +5,8 @@
    Design tokens ported from the 2016 css/my.css
    ------------------------------------------------------------------ */
 @theme {
-  --font-serif: "Crimson Pro", Georgia, serif;
-  --font-sans: "Crimson Pro", Georgia, serif;
+  --font-serif: "Alegreya", Georgia, serif;
+  --font-sans: "Alegreya", Georgia, serif;
 
   --color-blu: #325bae;      /* .rosso — links, accents */
   --color-slate: #54668c;    /* h2 small */
@@ -99,7 +99,7 @@
     font-size: 5.25em;
     line-height: .66em;
     padding: .1em .1em 2px 0;
-    font-weight: 800;
+    font-weight: 700;
   }
   .drop-cap.large > p:first-of-type::first-letter { font-size: 4.5em; padding-right: .2em; }
 

@@ -14,7 +14,7 @@ defineProps<{ page: SitePageKey }>()
         <h6
           v-for="p in SITE_PAGES"
           :key="p.key"
-          class="block-link mx-2 mt-3 block border-b border-black/5 pb-2 font-light uppercase xs:inline-block xs:border-b-0 xs:pb-0 lg:mt-0"
+          class="block-link text-sm mx-2 mt-3 block border-b border-black/5 pb-2 font-light uppercase xs:inline-block xs:border-b-0 xs:pb-0 lg:mt-0"
         >
           <NuxtLink
             :to="p.to"

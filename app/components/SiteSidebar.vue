@@ -19,9 +19,9 @@ const current = useScrollSpy(() => props.sections.map(s => s.id))
       <ul class="m-0 list-none p-0 text-center text-[1.2em]">
         <template v-for="(p, i) in SITE_PAGES" :key="p.key">
           <li v-if="i > 0" aria-hidden="true">
-            <hr class="mx-auto my-2 w-4/5 border-white/75">
+            <hr class="mx-auto my-3 w-4/5 border-white/75">
           </li>
-          <li class="py-1 text-[.8em] leading-[1.2em]">
+          <li class="py-1 text-[.8em] leading-[1.5em]">
             <NuxtLink
               :to="p.to"
               class="nav-link block uppercase not-italic"
@@ -33,9 +33,9 @@ const current = useScrollSpy(() => props.sections.map(s => s.id))
           </li>
           <template v-if="p.key === page">
             <li aria-hidden="true">
-              <hr class="mx-auto my-2 w-4/5 border-white/75">
+              <hr class="mx-auto my-3 w-4/5 border-white/75">
             </li>
-            <li v-for="s in sections" :key="s.id" class="leading-[1.2em]">
+            <li v-for="s in sections" :key="s.id" class="leading-[1.333em]">
               <a
                 :href="`#${s.id}`"
                 class="nav-link block italic"

@@ -9,7 +9,6 @@ const sections: SectionLink[] = [
   { id: 'call', label: 'call' },
   { id: 'papers', label: 'speakers and subjects' },
   { id: 'caius', label: 'venue' },
-  { id: 'book', label: 'book now' },
 ]
 
 const slides = [
@@ -18,6 +17,7 @@ const slides = [
   { src: '/img/lamina_03.jpg', alt: 'Engraved plate from Willis’s work' },
 ]
 const slide = ref(0)
+const playing = ref(true)
 
 const { data: programme } = await useAsyncData('programme', () => queryCollection('programme').first())
 </script>
@@ -27,9 +27,9 @@ const { data: programme } = await useAsyncData('programme', () => queryCollectio
     <section id="intro" class="sezione spaced-top">
       <SiteCover page="symposium" />
 
-      <div class="row mt-6 items-center text-center xs:text-right">
+      <div class="row mt-0 items-center text-center xs:text-right">
         <div class="col-span-12 sm:col-span-3">
-          <SlidePager v-model="slide" :count="slides.length" />
+          <SlidePager v-model="slide" v-model:playing="playing" :count="slides.length" controls="intro-slides" />
         </div>
         <div class="col-span-12 pr-2 sm:col-span-9">
           <p class="m-0 font-normal text-[#666]">
@@ -41,13 +41,13 @@ const { data: programme } = await useAsyncData('programme', () => queryCollectio
 
       <div class="row mt-4">
         <div class="col-span-12 sm:col-span-10 sm:col-start-2">
-          <SlideShow v-model="slide" :slides="slides" />
+          <SlideShow id="intro-slides" v-model="slide" v-model:playing="playing" :slides="slides" />
         </div>
       </div>
     </section>
 
     <section id="call" class="sezione spaced">
-      <SectionProse path="home/call" drop-cap class="sm:columns-2 sm:gap-[30px] [&>p]:break-inside-avoid" />
+      <SectionProse path="home/call" drop-cap large class="sm:columns-2 sm:gap-[30px] [&>p]:break-inside-avoid" />
     </section>
 
     <section id="papers" class="sezione spaced">
@@ -72,19 +72,6 @@ const { data: programme } = await useAsyncData('programme', () => queryCollectio
 
       <div class="row spaced-top">
         <SectionProse path="home/venue" class="col-span-12 md:col-span-10 md:col-start-3 md:columns-2 md:gap-[30px]" />
-      </div>
-
-      <div id="book" class="row">
-        <div class="col-span-12 md:col-span-2">
-          <img src="/img/ImageServerup.png" alt="Cambridge" class="mt-6 h-auto w-1/3 md:w-5/6">
-        </div>
-        <div class="col-span-12 md:col-span-10">
-          <hr>
-          <h2>Book Now</h2>
-          <p>
-            <a href="http://onlinesales.admin.cam.ac.uk/browse/extra_info.asp?compid=1&modid=2&deptid=298&catid=1237&prodid=1654" target="_blank" rel="noopener">onlinesales.admin.cam.ac.uk</a>
-          </p>
-        </div>
       </div>
     </section>
 

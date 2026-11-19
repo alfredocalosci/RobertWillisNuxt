@@ -24,13 +24,13 @@ const href = computed(() => props.item.file ? pdfBaseUrl + encodeURIComponent(pr
         <p class="m-0 pt-6 pr-2 font-light" itemprop="name">{{ item.author }}</p>
       </div>
       <p v-else class="m-0 pt-6" aria-hidden="true">&nbsp;</p>
-      <h4 class="mb-0 font-semibold" itemprop="name">{{ item.title }}</h4>
-      <p class="mb-2"><em>{{ item.publication }}</em>&nbsp;</p>
+      <h4 class="mb-0 font-semibold text-2xl/6" itemprop="name">{{ item.title }}</h4>
+      <p v-if="item.publication?.trim()" class="mb-2 text-base"><em>{{ item.publication }}</em></p>
 
-      <a v-if="href" :href="href" class="cloud float-right" itemprop="url" target="_blank" rel="noopener">
-        download [{{ item.sizeMb.toFixed(2) }} Mb ]
+      <a v-if="href" :href="href" class="cloud float-right mt-2" itemprop="url" target="_blank" rel="noopener">
+        download [<em class="px-1">{{ item.sizeMb.toFixed(2) }} Mb </em>]
       </a>
-      <p class="mb-0 text-blu" itemprop="bookEdition">{{ item.year }}</p>
+      <p class="mb-0 mt-2 text-blu font-semibold" itemprop="bookEdition">{{ item.year }}</p>
     </div>
   </li>
 </template>

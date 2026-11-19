@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   // Free substitute for the old Adobe Typekit freight-text-pro, self-hosted at build time.
   fonts: {
     families: [
-      { name: 'Crimson Pro', provider: 'google', weights: [300, 400, 500, 600, 700, 800], styles: ['normal', 'italic'] },
+      { name: 'Alegreya', provider: 'google', weights: [400, 500, 600, 700, 800], styles: ['normal', 'italic'] },
     ],
   },
 
