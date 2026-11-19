@@ -10,6 +10,7 @@ Stack: Nuxt 4 · @nuxt/content v3 (better-sqlite3) · @nuxt/ui v4 (Tailwind v4) 
 npm run dev             # dev server, http://localhost:3000
 npm run generate        # static build → .output/public (runs check:assets first)
 npm run check:assets    # lists library covers/PDFs referenced in YAML but missing from public/
+npm run find:pdfs       # searches Internet Archive (by title/author/year) for missing PDFs → missing-pdfs-report.md
 npx serve .output/public
 npx vue-tsc --noEmit -p .nuxt/tsconfig.app.json   # type check
 ```
@@ -49,6 +50,7 @@ public/
 scripts/
   import-library.mjs        one-off MySQL → YAML migration (history, see below)
   check-assets.mjs          asset presence check (pregenerate hook)
+  find-missing-pdfs.mjs     Internet Archive candidate report for missing PDFs (read-only, no downloads)
 ```
 
 ## Content model

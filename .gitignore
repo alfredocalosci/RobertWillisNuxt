@@ -27,3 +27,6 @@ logs
 # Library PDFs (~2.9 GB): copied in locally / uploaded to the host, never committed
 public/Library/pdf/*
 !public/Library/pdf/.gitkeep
+
+# Generated reports
+missing-pdfs-report.md
