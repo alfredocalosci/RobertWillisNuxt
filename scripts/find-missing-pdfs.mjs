@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * For each visible library entry whose PDF is missing from public/Library/pdf/,
+ * For each visible library entry whose PDF is missing from pdf/,
  * search the Internet Archive by title/author/year (not by filename) and write a
  * Markdown report of ranked candidates, including whether each item offers a PDF.
  * Read-only: nothing is downloaded.
@@ -34,7 +34,7 @@ const missing = readdirSync(dir).filter(f => f.endsWith('.yml')).map((f) => {
     author: field(y, 'author'), publication: field(y, 'publication'),
     file: field(y, 'file'), hidden: field(y, 'hidden'),
   }
-}).filter(e => !e.hidden && e.file && !existsSync(join(ROOT, 'public/Library/pdf', e.file)))
+}).filter(e => !e.hidden && e.file && !existsSync(join(ROOT, 'pdf', e.file)))
   .sort((a, b) => a.year - b.year)
 
 // ---------- Internet Archive ----------
@@ -120,7 +120,7 @@ const lines = [
   `Generated ${new Date().toISOString().slice(0, 10)} by \`scripts/find-missing-pdfs.mjs\`. `
   + `${missing.length} publications have no PDF. Score = title-word overlap (0.6) + same year (0.3, ±2y 0.15) + Willis as creator (0.1).`,
   '',
-  'Check each candidate (edition, completeness, plates) before downloading. Save the chosen PDF as the **target filename** in `public/Library/pdf/`.',
+  'Check each candidate (edition, completeness, plates) before downloading. Save the chosen PDF as the **target filename** in `pdf/`.',
   '',
 ]
 let found = 0

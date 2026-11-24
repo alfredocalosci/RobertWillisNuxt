@@ -23,7 +23,7 @@ import { spawnSync } from 'node:child_process'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const LIB = join(ROOT, 'content/library')
-const PDF = join(ROOT, 'public/Library/pdf')
+const PDF = join(ROOT, 'pdf')
 const GO = process.argv.includes('--go')
 const arg = (name, fallback) => process.argv.includes(name) ? Number(process.argv[process.argv.indexOf(name) + 1]) : fallback
 const ONLY = arg('--only', null)

@@ -2,8 +2,10 @@
 import type { LibraryCollectionItem } from '@nuxt/content'
 
 const props = defineProps<{ item: LibraryCollectionItem }>()
-const { pdfBaseUrl } = useRuntimeConfig().public
-const href = computed(() => props.item.file ? pdfBaseUrl + encodeURIComponent(props.item.file) : undefined)
+// PDFs are served from the Internet Archive (one item per publication, see scripts/ia-upload.mjs).
+const href = computed(() => props.item.archiveId && props.item.file
+  ? `https://archive.org/download/${props.item.archiveId}/${encodeURIComponent(props.item.file)}`
+  : undefined)
 </script>
 
 <template>

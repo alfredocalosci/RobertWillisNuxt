@@ -9,7 +9,9 @@ Stack: Nuxt 4 · @nuxt/content v3 (better-sqlite3) · @nuxt/ui v4 (Tailwind v4) 
 ```bash
 npm run dev             # dev server, http://localhost:3000
 npm run generate        # static build → .output/public (runs check:assets first)
-npm run check:assets    # lists library covers/PDFs referenced in YAML but missing from public/
+npm run check:assets    # fails on missing covers / archiveId; regenerates PDF 301s in public/.htaccess
+npm run ia:plan         # dry run: Internet Archive metadata for entries without archiveId
+npm run ia:upload -- --pause 600   # upload those to archive.org (ia CLI), write archiveId into YAML
 npm run find:pdfs       # searches Internet Archive (by title/author/year) for missing PDFs → missing-pdfs-report.md
 npx serve .output/public
 npx vue-tsc --noEmit -p .nuxt/tsconfig.app.json   # type check
@@ -45,11 +47,12 @@ content/
 public/
   img/                      site images and download icons
   Library/img/              library cover thumbnails (committed)
-  Library/pdf/              library PDFs, ~2–3 GB, GITIGNORED
-  .htaccess                 Apache only: legacy 301s + pretty URLs
+  .htaccess                 Apache only: legacy 301s (incl. generated /Library/pdf/* → archive.org) + pretty URLs
+pdf/                        local master PDFs, ~3 GB, GITIGNORED, not deployed (served from archive.org)
 scripts/
   import-library.mjs        one-off MySQL → YAML migration (history, see below)
-  check-assets.mjs          asset presence check (pregenerate hook)
+  check-assets.mjs          cover/archiveId check + .htaccess PDF redirects (pregenerate hook)
+  ia-upload.mjs             uploads pdf/<file> to the Internet Archive, one item per publication
   find-missing-pdfs.mjs     Internet Archive candidate report for missing PDFs (read-only, no downloads)
 ```
 
@@ -64,14 +67,16 @@ author: "Robert Willis"          # nullable
 title: "An attempt to Analyse the Automaton Chess Player"
 publication: "London: Booth"     # txt_lib, nullable
 category: "Science and technology"  # cat_lib, nullable, currently unused in UI
-file: "1821_Willis_….pdf"        # → {pdfBaseUrl}{encodeURIComponent(file)}
+file: "1821_Willis_….pdf"        # filename in pdf/ and inside the archive.org item
+archiveId: "robertwillis2016-1821-attempt-analyse-automaton-chess-player"
+                                 # → https://archive.org/download/<archiveId>/<encodeURIComponent(file)>
 cover: "1821.jpg"                # → /Library/img/<cover>
 sizeMb: 25.9
 hidden: false                    # hidden entries are kept but filtered out
 ```
 
 - Files are named `<year>-<legacyId>-<slug>.yml`. The default order is year ascending, then legacyId, matching the old `ORDER BY anno_lib, id_lib`.
-- To add or fix a publication, edit or add a YAML file, put the cover in `public/Library/img/`, and put the PDF in `public/Library/pdf/` (or upload it to the host). Then run `npm run check:assets`.
+- To add or fix a publication, edit or add a YAML file, put the cover in `public/Library/img/`, and put the PDF in `pdf/`, run `npm run ia:upload` (it sets `archiveId`), then `npm run check:assets`.
 - Section labels (the small italic `h2.sez` side headings) and the in-page nav lists live in the page `.vue` files, not in the Markdown.
 
 ## Conventions
@@ -85,8 +90,9 @@ hidden: false                    # hidden entries are kept but filtered out
 
 ## Gotchas
 
-- **The `/Library/` casing is deliberate.** It is the original 2016 URL. A lowercase `/library` route collides with `Library/` on macOS's case-insensitive filesystem: the prerendered pages overwrite each other. PDF links stay at `/Library/pdf/<file>`.
-- **PDFs are never committed**: the repo is public and some files exceed GitHub's 100 MB limit. `.gitignore` excludes `public/Library/pdf/*`. If PDFs move to a bucket or CDN, change `runtimeConfig.public.pdfBaseUrl` only.
+- **The `/Library/` casing is deliberate.** It is the original 2016 URL. A lowercase `/library` route collides with `Library/` on macOS's case-insensitive filesystem: the prerendered pages overwrite each other. Old `/Library/pdf/<file>` links 301 to archive.org on Apache only.
+- **PDFs are never committed or deployed**: the repo is public and some files exceed GitHub's 100 MB limit. They live on the Internet Archive; `pdf/` is a gitignored local master copy. Never move them back into `public/` (it would add ~3 GB to every build).
+- Internet Archive: the S3 keys live only in `~/.config/internetarchive/ia.ini` (chmod 600); never print or commit them. New accounts get rate-limited and spam-flagged on bursts of large uploads, so use `--pause 600`. After upload, items need hours to finish derive/OCR; the original PDF downloads work before that.
 - PDF filenames must match `file:` exactly, including the original quirks: the space in `…in_the_year _1841_OCR.pdf`, and the commas in a few names. Links are URL-encoded.
 - Legacy URLs: `/index.html` → `/` and `/about.html` → `/about` are prerendered meta-refresh redirects (`routeRules`). `.htaccess` also handles them, plus `/Library/index.php`, as real 301s on Apache.
 - npm 11 `allowScripts` in `package.json` approves the install scripts for better-sqlite3, esbuild and vue-demi. A fresh install of a newer version may need `npm install-scripts approve <pkg>`.
